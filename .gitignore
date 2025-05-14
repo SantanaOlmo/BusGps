@@ -11,6 +11,7 @@ target/
 *.iws
 *.iml
 *.ipr
+BusGPS.psd
 
 ### Eclipse ###
 .apt_generated
