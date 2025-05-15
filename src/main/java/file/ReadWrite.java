@@ -40,7 +40,6 @@ public class ReadWrite {
         }
     }
 
-
     public static ArrayList<GPSData> leerDatosGPS() throws IOException {
         ArrayList<GPSData> datos = new ArrayList<>();
 
@@ -49,19 +48,22 @@ public class ReadWrite {
             reader.readLine(); // Saltar cabecera
             while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",");
-                if (partes.length == 5) {
+                if (partes.length == 8) {
                     String busId = partes[0];
                     String timestamp = partes[1];
-                    double latitude = Double.parseDouble(partes[2]);
-                    double longitude = Double.parseDouble(partes[3]);
-                    double speed = Double.parseDouble(partes[4]);
+                    double latitude = Double.parseDouble(partes[2] + "." + partes[3]);
+                    double longitude = Double.parseDouble(partes[4] + "." + partes[5]);
+                    double speed = Double.parseDouble(partes[6] + "." + partes[7]);
                     datos.add(new GPSData(busId, timestamp, latitude, longitude, speed));
+                } else {
+                    System.err.println("Línea mal formateada: " + linea);
                 }
             }
         }
 
         return datos;
     }
+
 
 
     public static void archivar() throws IOException {

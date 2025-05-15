@@ -54,7 +54,7 @@ public class VentanaGPS extends JFrame {
         panelBotones.add(Box.createVerticalStrut(10));
         panelBotones.add(crearBoton("Calcular velocidad media", e -> {
 
-            double velocidadMedia = ProcesarGPSdata.calcularVelocidadMedia(datosGPS);
+            double velocidadMedia = ProcesarGPSdata.calcularVelocidadMedia(Menu.cargarCSV());
             JOptionPane.showMessageDialog(this, "Velocidad media: " + velocidadMedia + " km/h");
 
         }));
