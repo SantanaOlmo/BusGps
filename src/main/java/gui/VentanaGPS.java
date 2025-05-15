@@ -6,10 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import file.Estadisticas;
-import file.GenerarDatosGPS;
-import file.ProcesarGPSdata;
-import file.ReadWrite;
+import file.*;
 import logica.GPSData;
 import logica.Menu;
 import logica.Parada;
@@ -81,6 +78,16 @@ public class VentanaGPS extends JFrame {
         panelBotones.add(crearBoton("Mostrar estadísticas", e -> {
             String estadisticas = Estadisticas.mostrarEstadisticas(Menu.cargarCSV());
             JOptionPane.showMessageDialog(this, estadisticas, "Estadísticas de GPS", JOptionPane.INFORMATION_MESSAGE);
+        }));
+
+        panelBotones.add(Box.createVerticalStrut(10));
+        panelBotones.add(crearBoton("Actualizar Json",e -> {
+            JsonManager.actualizarJsonUltimaPosicion(Menu.cargarCSV());
+        }));
+        panelBotones.add(Box.createVerticalStrut(10));
+        panelBotones.add(crearBoton("Mostrar archivos Json",e -> {
+            JsonViewer.mostrarContenidoJsons();
+
         }));
 
         fondo.add(panelBotones, gbc);
