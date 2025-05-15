@@ -1,5 +1,7 @@
 package file;
 
+import logica.GPSData;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,13 +11,12 @@ public class ReadWrite {
 
     private static final String RUTA = "gps_data.csv";
 
-    public static void escribirDatosGPS(String busId, String timestamp, double latitude, double longitude, double speed) {
+    public static void escribirDatosGPS(ArrayList<GPSData> listaDatos) {
         boolean archivoExiste = new File(RUTA).exists();
         boolean escribirCabecera = true;
 
         try {
             if (archivoExiste) {
-                // Verifica si el archivo tiene contenido
                 escribirCabecera = Files.size(Paths.get(RUTA)) == 0;
             }
 
@@ -24,8 +25,14 @@ public class ReadWrite {
                     writer.write("busId,timestamp,latitude,longitude,speed\n");
                 }
 
-                writer.write(String.format("%s,%s,%.6f,%.6f,%.2f\n",
-                        busId, timestamp, latitude, longitude, speed));
+                for (GPSData data : listaDatos) {
+                    writer.write(String.format("%s,%s,%.6f,%.6f,%.2f\n",
+                            data.getBusId(),
+                            data.getTimestamp(),
+                            data.getLatitude(),
+                            data.getLongitude(),
+                            data.getSpeed()));
+                }
             }
 
         } catch (IOException e) {
@@ -33,21 +40,29 @@ public class ReadWrite {
         }
     }
 
-    public static ArrayList<String[]> leerDatosGPS() throws IOException {
-        ArrayList<String[]> datos = new ArrayList<>();
+
+    public static ArrayList<GPSData> leerDatosGPS() throws IOException {
+        ArrayList<GPSData> datos = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(RUTA))) {
             String linea;
+            reader.readLine(); // Saltar cabecera
             while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",");
-                if (partes.length == 3) {
-                    datos.add(partes);
+                if (partes.length == 5) {
+                    String busId = partes[0];
+                    String timestamp = partes[1];
+                    double latitude = Double.parseDouble(partes[2]);
+                    double longitude = Double.parseDouble(partes[3]);
+                    double speed = Double.parseDouble(partes[4]);
+                    datos.add(new GPSData(busId, timestamp, latitude, longitude, speed));
                 }
             }
         }
 
         return datos;
     }
+
 
     public static void archivar() throws IOException {
         File archivoOriginal = new File(RUTA);
@@ -82,6 +97,38 @@ public class ReadWrite {
     }
 
 
+    public static void guardarLoteGPS(ArrayList<GPSData> datos) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(RUTA))) {
+            writer.write("busId,timestamp,latitude,longitude,speed\n"); // Cabecera
+            for (GPSData d : datos) {
+                writer.write(String.format("%s,%s,%.6f,%.6f,%.2f\n",
+                        d.getBusId(), d.getTimestamp(), d.getLatitude(), d.getLongitude(), d.getSpeed()));
+            }
+        }
+    }
+
+    public static void verificarYArchivarSiEsOtroDia() throws IOException {
+        File archivoOriginal = new File(RUTA);
+
+        if (!archivoOriginal.exists()) {
+            return; // No hay nada que verificar ni archivar
+        }
+
+        // Obtener fecha de última modificación del archivo
+        long ultimaModificacion = archivoOriginal.lastModified();
+        java.time.LocalDate fechaArchivo =
+                java.time.Instant.ofEpochMilli(ultimaModificacion)
+                        .atZone(java.time.ZoneId.systemDefault())
+                        .toLocalDate();
+
+        // Obtener fecha actual
+        java.time.LocalDate fechaActual = java.time.LocalDate.now();
+
+        // Comparar fechas
+        if (!fechaArchivo.equals(fechaActual)) {
+            archivar(); // Si el archivo es de otro día, archivarlo
+        }
+    }
 
 }
 
