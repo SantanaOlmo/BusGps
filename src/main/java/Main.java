@@ -1,8 +1,8 @@
-import gui.Ventana;
+import gui.VentanaGPS;
 
 public class Main {
     public static void main(String[] args) {
-        //new Ventana();
+        new VentanaGPS();
 
     }
 }
