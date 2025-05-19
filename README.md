@@ -67,6 +67,6 @@ Encargada de la lectura y escritura de archivos CSV, así como del archivado de 
 * `escribirDatosGPS(String busId, String timestamp, double latitude, double longitude, double speed)`:
   Añade una línea de datos al archivo `gps_data.csv`. Si es la primera escritura, agrega la cabecera del CSV.
 * `leerDatosGPS()`:
-  Lee el archivo `gps_data.csv` y devuelve las líneas como arrays de Strings. *(⚠️ Actualmente solo considera líneas con 3 campos, lo cual puede ser un error si el CSV tiene 5 columnas.)*
+  Lee el archivo `gps_data.csv` y devuelve las líneas como arrays de Strings. 
 * `archivar()`:
   Mueve el archivo actual a una carpeta `archivados/` con un nombre único basado en fecha y hora. Luego crea un nuevo archivo `gps_data.csv` vacío con cabecera.
